@@ -20,7 +20,6 @@
 
         .container {
             position: relative;
-            /* Removed fixed 100vh to allow content to grow and scroll on mobile */
             height: 100vh;
             width: 100%;
             padding: 40px 0;
@@ -45,6 +44,7 @@
             transition: 
                 opacity 0.5s ease, 
                 transform 0.8s ease-in-out;
+            will-change: transform;
         }
         
         .card.visible {
@@ -337,6 +337,8 @@
             cursor: pointer;
             z-index: 10;
             transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         .flip-button:hover,
@@ -507,15 +509,43 @@
             // Add event listeners to flip buttons
             flipButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
+                    e.preventDefault();
                     e.stopPropagation(); // Prevent event bubbling
+                    
+                    // Temporarily reduce animation load during flip
+                    const sparkleInterval = window.sparkleInterval;
+                    const petalInterval = window.petalInterval;
+                    clearInterval(sparkleInterval);
+                    clearInterval(petalInterval);
+                    
+                    // Flip the card
                     card.classList.toggle('flipped');
+                    
+                    // Resume animations after flip completes
+                    setTimeout(() => {
+                        window.sparkleInterval = setInterval(createSparkle, 200);
+                        window.petalInterval = setInterval(createFallingPetal, 500);
+                    }, 800);
                 });
             });
             
             // Fallback: also flip the card if user clicks anywhere not on a button or the photo
             card.addEventListener('click', function(e) {
                 if (!e.target.closest('.flip-button') && !e.target.closest('.photo-frame')) {
+                    // Temporarily reduce animation load during flip
+                    const sparkleInterval = window.sparkleInterval;
+                    const petalInterval = window.petalInterval;
+                    clearInterval(sparkleInterval);
+                    clearInterval(petalInterval);
+                    
+                    // Flip the card
                     card.classList.toggle('flipped');
+                    
+                    // Resume animations after flip completes
+                    setTimeout(() => {
+                        window.sparkleInterval = setInterval(createSparkle, 200);
+                        window.petalInterval = setInterval(createFallingPetal, 500);
+                    }, 800);
                 }
             });
             
@@ -523,20 +553,39 @@
             card.addEventListener('touchstart', function(e) {
                 this.touchStartX = e.touches[0].clientX;
                 this.touchStartY = e.touches[0].clientY;
+                this.touchStartTime = Date.now();
             }, { passive: true });
             
             card.addEventListener('touchend', function(e) {
                 if (e.changedTouches.length > 0) {
                     const touchEndX = e.changedTouches[0].clientX;
                     const touchEndY = e.changedTouches[0].clientY;
+                    const touchEndTime = Date.now();
                     
                     const distX = Math.abs(touchEndX - this.touchStartX);
                     const distY = Math.abs(touchEndY - this.touchStartY);
+                    const timeDiff = touchEndTime - this.touchStartTime;
                     
-                    if (distX < 10 && distY < 10 && 
+                    // More forgiving touch detection for mobile
+                    // Only check if it's a quick tap (under 300ms) and minimal movement
+                    if (timeDiff < 300 && distX < 15 && distY < 15 && 
                         !e.target.closest('.flip-button') && 
                         !e.target.closest('.photo-frame')) {
+                        
+                        // Temporarily reduce animation load during flip
+                        const sparkleInterval = window.sparkleInterval;
+                        const petalInterval = window.petalInterval;
+                        clearInterval(sparkleInterval);
+                        clearInterval(petalInterval);
+                        
+                        // Flip the card
                         card.classList.toggle('flipped');
+                        
+                        // Resume animations after flip completes
+                        setTimeout(() => {
+                            window.sparkleInterval = setInterval(createSparkle, 200);
+                            window.petalInterval = setInterval(createFallingPetal, 500);
+                        }, 800);
                     }
                 }
             }, { passive: true });
@@ -614,10 +663,18 @@
                 }, 13000);
             }
             
-            setInterval(createFallingPetal, 500);
+            // Store interval references so we can pause them during card flip
+            window.petalInterval = setInterval(createFallingPetal, 500);
             
             // Create sparkle effect
             function createSparkle() {
+                // Limit number of sparkles on mobile
+                const isMobile = window.innerWidth < 768;
+                const maxSparkles = isMobile ? 20 : 50;
+                const sparkles = document.querySelectorAll('.sparkle');
+                
+                if (sparkles.length > maxSparkles) return;
+                
                 const container = document.querySelector('.container');
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
@@ -640,11 +697,22 @@
                 container.appendChild(sparkle);
                 
                 setTimeout(() => {
-                    container.removeChild(sparkle);
+                    if (sparkle.parentNode === container) {
+                        container.removeChild(sparkle);
+                    }
                 }, 2000);
             }
             
-            setInterval(createSparkle, 200);
+            // Store interval reference so we can pause it during card flip
+            window.sparkleInterval = setInterval(createSparkle, 200);
+            
+            // Detect if we're on a mobile device and reduce animation frequency
+            if (window.innerWidth < 768) {
+                clearInterval(window.sparkleInterval);
+                clearInterval(window.petalInterval);
+                window.sparkleInterval = setInterval(createSparkle, 400); // Reduce frequency
+                window.petalInterval = setInterval(createFallingPetal, 1000); // Reduce frequency
+            }
         });
     </script>
 </body>
