@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Brannon!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121212;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 700px;
+            height: 500px;
+            position: relative;
+            perspective: 1500px;
+            margin: 20px;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(131, 56, 236, 0.8);
+            cursor: pointer;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #1a1a1a 0%, #303030 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 30px;
+            padding-bottom: 60px;
+            padding-left: 30px;
+            padding-right: 30px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #2c1e4a 0%, #401e63 100%);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .flip {
+            transform: rotateY(180deg);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(131, 56, 236, 0.8);
+            animation: glow 2s infinite alternate;
+        }
+
+        p {
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            width: 70%;
+            max-width: 280px;
+            aspect-ratio: 1;
+            margin: 15px auto;
+            border: 3px solid #8338ec;
+            box-shadow: 0 0 20px rgba(131, 56, 236, 0.8);
+        }
+
+        .chess-square {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .white {
+            background-color: #f0f0f0;
+        }
+
+        .black {
+            background-color: #333;
+        }
+
+        .piece {
+            font-size: 2em;
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+
+        .click-to-open {
+            color: #8338ec;
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(131, 56, 236, 1), 0 0 15px rgba(131, 56, 236, 0.8);
+            animation: click-pulse 2s infinite;
+            position: absolute;
+            bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(131, 56, 236, 0.5);
+        }
+
+        @keyframes click-pulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .controllers-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 5px 0;
+            width: 90%;
+            gap: 10px;
+        }
+
+        .game-controller {
+            font-size: 2.2em;
+            margin: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .game-controller:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 10px rgba(131, 56, 236, 0.8));
+        }
+
+        .game-controller:nth-child(1) {
+            animation: rotate 4s infinite linear;
+        }
+
+        .game-controller:nth-child(2) {
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .game-controller:nth-child(3) {
+            animation: pulse 1.5s infinite;
+        }
+
+        .game-controller:nth-child(4) {
+            animation: wiggle 2.5s infinite ease-in-out;
+        }
+
+        .game-controller:nth-child(5) {
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .game-controller:nth-child(6) {
+            animation: rotate 5s infinite linear reverse;
+        }
+
+        .game-controller:nth-child(7) {
+            animation: pulse 2s infinite;
+        }
+
+        .game-controller:nth-child(8) {
+            animation: bounce 3s infinite ease-in-out;
+        }
+
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(131, 56, 236, 0.8) 0%, rgba(131, 56, 236, 0) 70%);
+            border-radius: 50%;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #8338ec, 0 0 10px #8338ec, 0 0 15px #8338ec, 0 0 20px #8338ec;
+            }
+            to {
+                text-shadow: 0 0 10px #8338ec, 0 0 20px #8338ec, 0 0 30px #8338ec, 0 0 40px #8338ec;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+            50% {
+                transform: translateY(0) translateX(20px);
+            }
+            75% {
+                transform: translateY(20px) translateX(10px);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .fireworks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: -1;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            box-shadow: 0 0 5px 1px;
+            animation: firework 1s ease-out infinite;
+        }
+
+        @keyframes firework {
+            0% {
+                opacity: 1;
+                box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.8);
+                transform: scale(0.1);
+            }
+            100% {
+                opacity: 0;
+                box-shadow: 0 0 40px 20px rgba(255, 255, 255, 0);
+                transform: scale(1);
+            }
+        }
+
+        .pixelated-text {
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ff00cc, #3333ff, #00ccff, #ff00cc);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 6s ease infinite;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            padding: 0 20px;
+            width: 90%;
+            text-align: center;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: confetti 5s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="card-front">
+                <h1 class="pixelated-text">HAPPY BIRTHDAY BRANNON!</h1>
+                <div class="controllers-container">
+                    <div class="game-controller">🎮</div>
+                    <div class="game-controller">🕹️</div>
+                    <div class="game-controller">🎲</div>
+                    <div class="game-controller">🎯</div>
+                    <div class="game-controller">👾</div>
+                    <div class="game-controller">🎴</div>
+                    <div class="game-controller">🎭</div>
+                    <div class="game-controller">🏆</div>
+                </div>
+                <div class="chess-board" id="chessBoard"></div>
+                <p class="click-to-open">CLICK TO OPEN</p>
+            </div>
+            <div class="card-back">
+                <h1>You're old!</h1>
+                <p>Brannon, may your next year be filled with epic wins, legendary loot, and critical hits of happiness! Here's to another year.</p>
+                <p>Much love, Chris</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+    <div class="fireworks" id="fireworks"></div>
+
+    <script>
+        // Create chess board
+        const chessBoard = document.getElementById('chessBoard');
+        const pieces = ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'];
+        const pawns = '♟';
+
+        for (let i = 0; i < 64; i++) {
+            const row = Math.floor(i / 8);
+            const col = i % 8;
+            const isWhite = (row + col) % 2 === 0;
+            
+            const square = document.createElement('div');
+            square.className = `chess-square ${isWhite ? 'white' : 'black'}`;
+            
+            // Add pieces
+            if (row === 0) {
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.textContent = pieces[col];
+                piece.style.color = '#8338ec';
+                square.appendChild(piece);
+            } else if (row === 1) {
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.textContent = pawns;
+                piece.style.color = '#8338ec';
+                square.appendChild(piece);
+            }
+            
+            chessBoard.appendChild(square);
+        }
+
+        // Card flip
+        const card = document.querySelector('.card');
+        const fireworks = document.getElementById('fireworks');
+        
+        card.addEventListener('click', function() {
+            this.classList.toggle('flip');
+            
+            if (this.classList.contains('flip')) {
+                // Show fireworks when card is flipped
+                fireworks.style.display = 'block';
+                createFireworks();
+                createConfetti();
+            } else {
+                fireworks.style.display = 'none';
+                clearFireworks();
+            }
+        });
+
+        // Create background particles
+        const particles = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.width = `${10 + Math.random() * 20}px`;
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particles.appendChild(particle);
+        }
+
+        // Animate chess pieces
+        const chessPieces = document.querySelectorAll('.piece');
+        chessPieces.forEach(piece => {
+            setInterval(() => {
+                piece.style.transform = `scale(${0.9 + Math.random() * 0.3})`;
+            }, 1000 + Math.random() * 1000);
+        });
+
+        // Animate game controllers on load
+        const gameControllers = document.querySelectorAll('.game-controller');
+        gameControllers.forEach((controller, index) => {
+            controller.style.opacity = '0';
+            controller.style.transform = 'scale(0)';
+            
+            setTimeout(() => {
+                controller.style.opacity = '1';
+                controller.style.transform = 'scale(1)';
+                controller.style.transition = 'all 0.5s ease';
+            }, 300 * index);
+        });
+
+        // Create fireworks
+        function createFireworks() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = `${Math.random() * 100}%`;
+                    firework.style.top = `${Math.random() * 100}%`;
+                    firework.style.backgroundColor = getRandomColor();
+                    fireworks.appendChild(firework);
+                    
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 1000);
+                }, i * 300);
+            }
+        }
+
+        function clearFireworks() {
+            while (fireworks.firstChild) {
+                fireworks.removeChild(fireworks.firstChild);
+            }
+        }
+
+        function getRandomColor() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Create confetti
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = `${5 + Math.random() * 10}px`;
+                confetti.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

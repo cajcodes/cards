@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just To Say Hi, Mum</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            position: relative;
+            perspective: 1500px;
+            margin: 20px;
+            z-index: 1;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(219, 112, 219, 0.8), 0 0 60px rgba(131, 56, 236, 0.5);
+            cursor: pointer;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.8) 0%, rgba(131, 56, 236, 0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, rgba(248, 187, 208, 0.9) 0%, rgba(179, 102, 255, 0.9) 100%);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .glow-overlay {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: radial-gradient(circle, rgba(255, 105, 180, 0.4) 0%, rgba(131, 56, 236, 0.4) 50%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .flip {
+            transform: rotateY(180deg);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 3.2em;
+            text-align: center;
+            margin: 0 0 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8), 0 0 20px rgba(131, 56, 236, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 105, 180, 0.8), 0 0 20px rgba(131, 56, 236, 0.8); }
+            to { text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 30px rgba(131, 56, 236, 0.8), 0 0 40px rgba(255, 255, 255, 0.8); }
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.6em;
+            text-align: center;
+            margin-top: 5px;
+            font-weight: 300;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        p {
+            color: #fff;
+            font-size: 1.4em;
+            text-align: center;
+            max-width: 90%;
+            line-height: 1.6;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .click-to-open {
+            color: #fff;
+            margin-top: 20px;
+            animation: pulse 1.5s infinite;
+            font-size: 1.2em;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .garden {
+            position: relative;
+            width: 90%;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .flower {
+            position: absolute;
+            transform-origin: bottom center;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+        }
+
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+            color: #fff;
+            font-size: 1.5em;
+            text-shadow: 0 0 5px rgba(131, 56, 236, 0.8);
+            position: relative;
+        }
+
+        .signature::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+        }
+
+        .floating-petals {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .petal {
+            position: absolute;
+            background-size: 100% 100%;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        @keyframes sway {
+            0% {
+                transform: rotate(-5deg);
+            }
+            100% {
+                transform: rotate(5deg);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(-5%) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(105%) translateX(20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hearts-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            animation: float-heart 4s ease-in-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes float-heart {
+            0% {
+                transform: translateY(0) translateX(0) scale(1) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-120px) translateX(var(--tx)) scale(1.3) rotate(var(--tr));
+                opacity: 0;
+            }
+        }
+
+        .butterfly {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            z-index: 3;
+            filter: drop-shadow(0 0 8px rgba(255, 105, 180, 0.6));
+        }
+
+        @keyframes butterfly-fly {
+            0% {
+                transform: translateX(-50px) translateY(var(--y)) rotate(var(--r));
+            }
+            25% {
+                transform: translateX(25vw) translateY(calc(var(--y) - 50px)) rotate(calc(var(--r) + 10deg));
+            }
+            50% {
+                transform: translateX(50vw) translateY(var(--y)) rotate(var(--r));
+            }
+            75% {
+                transform: translateX(75vw) translateY(calc(var(--y) + 50px)) rotate(calc(var(--r) - 10deg));
+            }
+            100% {
+                transform: translateX(100vw) translateY(var(--y)) rotate(var(--r));
+            }
+        }
+
+        .circle-effect {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-sizing: border-box;
+            opacity: 0;
+            animation: circle-expand 2s ease-out forwards;
+        }
+
+        @keyframes circle-expand {
+            0% {
+                width: 0;
+                height: 0;
+                top: 50%;
+                left: 50%;
+                opacity: 0.8;
+            }
+            100% {
+                width: 150%;
+                height: 150%;
+                top: -25%;
+                left: -25%;
+                opacity: 0;
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0;
+            animation: sparkle 1s ease-in-out forwards;
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .floral-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 15px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .border-flower {
+            position: absolute;
+            z-index: 1;
+        }
+
+        .ink-splash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+            filter: hue-rotate(150deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="card-container">
+        <div class="card">
+            <div class="card-front">
+                <div class="glow-overlay"></div>
+                <div class="ink-splash">
+                    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#ff69b4" d="M198.7,25.3c5.1-8.1,10.8-15.9,17.1-23.1c1.9,10.3,1.4,20.8,4.1,31c6.1,4.1,13.5,3.1,20.1,5.3
+                        c-5.8,7.1-12.9,12.8-18.3,20.3c1,6.9,6.4,12.4,7.3,19.3c-8.8-1.1-16.4-6.1-25.4-7c-6.2,5.2-10.3,12.5-16.9,17.1
+                        c-3.2-9.4-3.3-19.8-8.4-28.5c-8.4-3.3-17.7-4.3-25.6-8.7c10.3-4.3,21.2-6.6,30.9-12.1C186.2,33.4,184.1,14.1,198.7,25.3z"/>
+                        <!-- More splash paths would be here -->
+                    </svg>
+                </div>
+                <div class="floral-border" id="floralBorder"></div>
+                <h1>Just to say hi</h1>
+                <div class="subtitle">Thinking of you, Mum</div>
+                <div class="garden" id="garden"></div>
+                <div class="click-to-open">Click to open</div>
+            </div>
+            <div class="card-back">
+                <div class="glow-overlay" style="animation-direction: reverse;"></div>
+                <h1 style="background: linear-gradient(90deg, #ff69b4, #8338ec, #ff69b4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: gradient-text 3s linear infinite;">Hi Mum!</h1>
+                <p>Just a little note to brighten your day and let you know I'm thinking about you. You bring so much beauty into my life - just like these flowers!</p>
+                <p>Lots of love,</p>
+                <div class="signature">Chris</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-petals" id="petals"></div>
+    <div class="hearts-container" id="hearts"></div>
+
+    <script>
+        // Create starry background
+        const stars = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animation = `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            stars.appendChild(star);
+        }
+
+        // Card flip
+        const card = document.querySelector('.card');
+        const hearts = document.getElementById('hearts');
+        
+        card.addEventListener('click', function() {
+            this.classList.toggle('flip');
+            
+            // Create expanding circle effect on click
+            const circle = document.createElement('div');
+            circle.className = 'circle-effect';
+            this.appendChild(circle);
+            
+            setTimeout(() => {
+                circle.remove();
+            }, 2000);
+            
+            // Create sparkles
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = `${Math.random() * 100}%`;
+                    sparkle.style.top = `${Math.random() * 100}%`;
+                    sparkle.style.animationDelay = `${Math.random() * 0.5}s`;
+                    this.appendChild(sparkle);
+                    
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 1000);
+                }, i * 50);
+            }
+            
+            if (this.classList.contains('flip')) {
+                // Show hearts when card is flipped
+                hearts.style.display = 'block';
+                createHearts();
+            } else {
+                hearts.style.display = 'none';
+                while (hearts.firstChild) {
+                    hearts.removeChild(hearts.firstChild);
+                }
+            }
+        });
+
+        // Create garden of flowers with enhanced SVGs
+        const garden = document.getElementById('garden');
+        const flowerTypes = [
+            // Flower 1 - Fancy Rose
+            `<svg width="50" height="90" viewBox="0 0 50 90">
+                <defs>
+                    <radialGradient id="roseGradient" cx="50%" cy="30%" r="70%" fx="50%" fy="30%">
+                        <stop offset="0%" style="stop-color:#ff99cc;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ff3399;stop-opacity:1" />
+                    </radialGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <path d="M25 55 L25 85" stroke="#2e8b57" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M25 65 L20 60" stroke="#2e8b57" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M25 75 L30 70" stroke="#2e8b57" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M25 55 C15 40, 5 50, 25 25 C45 50, 35 40, 25 55 Z" fill="url(#roseGradient)" filter="url(#glow)">
+                    <animate attributeName="d" dur="3s" repeatCount="indefinite" 
+                    values="M25 55 C15 40, 5 50, 25 25 C45 50, 35 40, 25 55 Z; 
+                           M25 55 C18 42, 8 48, 25 25 C42 48, 32 42, 25 55 Z;
+                           M25 55 C15 40, 5 50, 25 25 C45 50, 35 40, 25 55 Z"/>
+                </path>
+            </svg>`,
+            
+            // Flower 2 - Magical Tulip
+            `<svg width="60" height="100" viewBox="0 0 60 100">
+                <defs>
+                    <linearGradient id="tulipGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#9966ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#6600cc;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="tulipGlow">
+                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <path d="M30 60 L30 95" stroke="#2e8b57" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M30 75 L35 70" stroke="#2e8b57" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M30 85 L25 80" stroke="#2e8b57" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M30 30 C15 20, 5 35, 30 60 C55 35, 45 20, 30 30 Z" fill="url(#tulipGradient)" filter="url(#tulipGlow)">
+                    <animate attributeName="d" dur="4s" repeatCount="indefinite" 
+                    values="M30 30 C15 20, 5 35, 30 60 C55 35, 45 20, 30 30 Z; 
+                           M30 30 C18 22, 8 37, 30 60 C52 37, 42 22, 30 30 Z;
+                           M30 30 C15 20, 5 35, 30 60 C55 35, 45 20, 30 30 Z"/>
+                </path>
+            </svg>`,
+            
+            // Flower 3 - Glowing Daisy
+            `<svg width="50" height="90" viewBox="0 0 50 90">
+                <defs>
+                    <radialGradient id="daisyCenter" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:#ffffcc;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ffcc00;stop-opacity:1" />
+                    </radialGradient>
+                    <linearGradient id="petalGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ffb6c1;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ff69b4;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="daisyGlow">
+                        <feGaussianBlur stdDeviation="1" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <path d="M25 55 L25 85" stroke="#2e8b57" stroke-width="2" stroke-linecap="round"/>
+                <ellipse cx="25" cy="35" rx="6" ry="15" fill="url(#petalGradient)" transform="rotate(0 25 35)" filter="url(#daisyGlow)">
+                    <animate attributeName="ry" values="15;14;15" dur="3s" repeatCount="indefinite" />
+                </ellipse>
+                <ellipse cx="25" cy="35" rx="6" ry="15" fill="url(#petalGradient)" transform="rotate(45 25 35)" filter="url(#daisyGlow)">
+                    <animate attributeName="ry" values="15;14;15" dur="3s" repeatCount="indefinite" />
+                </ellipse>
+                <ellipse cx="25" cy="35" rx="6" ry="15" fill="url(#petalGradient)" transform="rotate(90 25 35)" filter="url(#daisyGlow)">
+                    <animate attributeName="ry" values="15;14;15" dur="3s" repeatCount="indefinite" />
+                </ellipse>
+                <ellipse cx="25" cy="35" rx="6" ry="15" fill="url(#petalGradient)" transform="rotate(135 25 35)" filter="url(#daisyGlow)">
+                    <animate attributeName="ry" values="15;14;15" dur="3s" repeatCount="indefinite" />
+                </ellipse>
+                <circle cx="25" cy="35" r="7" fill="url(#daisyCenter)">
+                    <animate attributeName="r" values="7;6.5;7" dur="3s" repeatCount="indefinite" />
+                </circle>
+            </svg>`,
+            
+            // Flower 4 - Magical Wildflower Cluster
+            `<svg width="60" height="90" viewBox="0 0 60 90">
+                <defs>
+                    <radialGradient id="purpleGradient1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:#d9a3ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#b366ff;stop-opacity:1" />
+                    </radialGradient>
+                    <radialGradient id="purpleGradient2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:#c495f0;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8338ec;stop-opacity:1" />
+                    </radialGradient>
+                    <filter id="wildflowerGlow">
+                        <feGaussianBlur stdDeviation="1" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <path d="M30 50 L30 85" stroke="#2e8b57" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="30" cy="25" r="7" fill="url(#purpleGradient1)" filter="url(#wildflowerGlow)">
+                    <animate attributeName="r" values="7;6.5;7" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="40" cy="30" r="7" fill="url(#purpleGradient2)" filter="url(#wildflowerGlow)">
+                    <animate attributeName="r" values="7;6.5;7" dur="3.5s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="20" cy="30" r="7" fill="url(#purpleGradient1)" filter="url(#wildflowerGlow)">
+                    <animate attributeName="r" values="7;6.5;7" dur="2.5s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="30" cy="35" r="7" fill="url(#purpleGradient2)" filter="url(#wildflowerGlow)">
+                    <animate attributeName="r" values="7;6.5;7" dur="4s" repeatCount="indefinite" />
+                </circle>
+            </svg>`
+        ];
+
+        // Create floral border
+        const floralBorder = document.getElementById('floralBorder');
+        const borderPositions = [
+            {x: '2%', y: '5%', rotate: '0deg', scale: 0.5},
+            {x: '5%', y: '92%', rotate: '180deg', scale: 0.6},
+            {x: '92%', y: '7%', rotate: '45deg', scale: 0.5},
+            {x: '93%', y: '90%', rotate: '225deg', scale: 0.6},
+            {x: '50%', y: '2%', rotate: '0deg', scale: 0.4},
+            {x: '50%', y: '95%', rotate: '180deg', scale: 0.4},
+            {x: '3%', y: '50%', rotate: '270deg', scale: 0.4},
+            {x: '95%', y: '50%', rotate: '90deg', scale: 0.4}
+        ];
+        
+        // Add flowers to border
+        borderPositions.forEach(pos => {
+            const borderFlower = document.createElement('div');
+            borderFlower.className = 'border-flower';
+            const flowerIndex = Math.floor(Math.random() * flowerTypes.length);
+            borderFlower.innerHTML = flowerTypes[flowerIndex];
+            borderFlower.style.left = pos.x;
+            borderFlower.style.top = pos.y;
+            borderFlower.style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`;
+            floralBorder.appendChild(borderFlower);
+        });
+
+        // Place flowers with different sizes and positions in garden
+        for (let i = 0; i < 12; i++) {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            
+            // Select a random flower type
+            const flowerType = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+            flower.innerHTML = flowerType;
+            
+            // Position randomly in the garden
+            const leftPos = Math.random() * 80 + 10; // 10-90%
+            const scale = 0.6 + Math.random() * 0.8; // 0.6-1.4
+            flower.style.left = `${leftPos}%`;
+            flower.style.bottom = '0';
+            flower.style.transform = `scale(${scale})`;
+            flower.style.animation = `sway ${3 + Math.random() * 2}s ease-in-out infinite alternate`;
+            flower.style.animationDelay = `${Math.random() * 2}s`;
+            
+            garden.appendChild(flower);
+        }
+
+        // Create falling petals with enhanced SVGs
+        const petals = document.getElementById('petals');
+        const petalColors = [
+            {light: '#ffb6c1', dark: '#ff69b4'},
+            {light: '#d9a3ff', dark: '#b366ff'},
+            {light: '#c495f0', dark: '#8338ec'},
+            {light: '#f8bff8', dark: '#e980fc'}
+        ];
+        
+        for (let i = 0; i < 40; i++) {
+            setTimeout(() => {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                
+                // Choose random petal color
+                const colorSet = petalColors[Math.floor(Math.random() * petalColors.length)];
+                
+                petal.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20">
+                    <defs>
+                        <linearGradient id="petalGradient${i}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:${colorSet.light};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${colorSet.dark};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z" fill="url(#petalGradient${i})">
+                        <animate attributeName="d" dur="${2 + Math.random()}s" repeatCount="indefinite" 
+                        values="M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z; 
+                               M10,1 C15,6 17,9 10,19 C3,9 5,6 10,1 Z;
+                               M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z" />
+                    </path>
+                </svg>`;
+                
+                // Position and animate petal
+                const size = 15 + Math.random() * 15;
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size}px`;
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.top = `-${size}px`;
+                petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Add floating animation
+                const duration = 10 + Math.random() * 15;
+                petal.style.animation = `float ${duration}s linear infinite`;
+                
+                petals.appendChild(petal);
+                
+                // Remove petal after animation to save memory
+                setTimeout(() => {
+                    petal.remove();
+                }, duration * 1000);
+            }, i * 200);
+        }
+
+        // Create hearts animation
+        function createHearts() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.style.left = `${30 + Math.random() * 40}%`;
+                    heart.style.bottom = '20%';
+                    heart.style.setProperty('--tx', `${-20 + Math.random() * 40}px`);
+                    heart.style.setProperty('--tr', `${-30 + Math.random() * 60}deg`);
+                    
+                    // Create SVG heart
+                    heart.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 24 24">
+                        <defs>
+                            <radialGradient id="heartGradient${i}" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                <stop offset="0%" style="stop-color:#ff99cc;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff3399;stop-opacity:1" />
+                            </radialGradient>
+                        </defs>
+                        <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" 
+                            fill="url(#heartGradient${i})" filter="url(#glow)">
+                            <animate attributeName="d" dur="1s" repeatCount="1" 
+                            values="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z;
+                                   M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+                        </path>
+                    </svg>`;
+                    
+                    hearts.appendChild(heart);
+                    
+                    // Remove heart after animation
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 4000);
+                }, i * 300);
+            }
+        }
+
+        // Add butterflies
+        function addButterflies() {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const butterfly = document.createElement('div');
+                    butterfly.className = 'butterfly';
+                    butterfly.style.setProperty('--y', `${20 + Math.random() * 60}%`);
+                    butterfly.style.setProperty('--r', `${-20 + Math.random() * 40}deg`);
+                    butterfly.style.top = `${20 + Math.random() * 60}%`;
+                    
+                    // Create SVG butterfly
+                    butterfly.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 50 50">
+                        <defs>
+                            <linearGradient id="wingGradient${i}" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ff99cc;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#9966ff;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="butterflyGlow">
+                                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                        <g filter="url(#butterflyGlow)">
+                            <path d="M25,15 C30,5 40,5 25,25 C10,5 20,5 25,15 Z" fill="url(#wingGradient${i})">
+                                <animate attributeName="d" dur="0.8s" repeatCount="indefinite" 
+                                values="M25,15 C30,5 40,5 25,25 C10,5 20,5 25,15 Z; 
+                                       M25,15 C35,10 45,15 25,25 C5,15 15,10 25,15 Z;
+                                       M25,15 C30,5 40,5 25,25 C10,5 20,5 25,15 Z" />
+                            </path>
+                            <path d="M25,35 C30,45 40,45 25,25 C10,45 20,45 25,35 Z" fill="url(#wingGradient${i})">
+                                <animate attributeName="d" dur="0.8s" repeatCount="indefinite" 
+                                values="M25,35 C30,45 40,45 25,25 C10,45 20,45 25,35 Z; 
+                                       M25,35 C35,40 45,35 25,25 C5,35 15,40 25,35 Z;
+                                       M25,35 C30,45 40,45 25,25 C10,45 20,45 25,35 Z" />
+                            </path>
+                            <line x1="25" y1="20" x2="25" y2="30" stroke="#ff3399" stroke-width="1.5" />
+                            <circle cx="25" cy="18" r="1.5" fill="#ff3399" />
+                        </g>
+                    </svg>`;
+                    
+                    document.body.appendChild(butterfly);
+                    
+                    // Animate butterfly
+                    butterfly.style.animation = `butterfly-fly ${15 + Math.random() * 10}s linear infinite`;
+                    butterfly.style.animationDelay = `${i * 5}s`;
+                    
+                    // Remove butterfly after some time
+                    setTimeout(() => {
+                        butterfly.remove();
+                    }, 30000);
+                }, i * 5000);
+            }
+        }
+
+        // Add gradient text animation
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                @keyframes gradient-text {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+            </style>
+        `);
+
+        // Initialize butterflies
+        addButterflies();
+        
+        // Periodically add new petals
+        setInterval(() => {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    
+                    // Choose random petal color
+                    const colorSet = petalColors[Math.floor(Math.random() * petalColors.length)];
+                    
+                    petal.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20">
+                        <defs>
+                            <linearGradient id="petalGradientNew${i}" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:${colorSet.light};stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:${colorSet.dark};stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z" fill="url(#petalGradientNew${i})">
+                            <animate attributeName="d" dur="${2 + Math.random()}s" repeatCount="indefinite" 
+                            values="M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z; 
+                                   M10,1 C15,6 17,9 10,19 C3,9 5,6 10,1 Z;
+                                   M10,1 C14,5 16,8 10,19 C4,8 6,5 10,1 Z" />
+                        </path>
+                    </svg>`;
+                    
+                    // Position and animate petal
+                    const size = 15 + Math.random() * 15;
+                    petal.style.width = `${size}px`;
+                    petal.style.height = `${size}px`;
+                    petal.style.left = `${Math.random() * 100}%`;
+                    petal.style.top = `-${size}px`;
+                    petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    
+                    // Add floating animation
+                    const duration = 10 + Math.random() * 15;
+                    petal.style.animation = `float ${duration}s linear infinite`;
+                    
+                    petals.appendChild(petal);
+                    
+                    // Remove petal after animation to save memory
+                    setTimeout(() => {
+                        petal.remove();
+                    }, duration * 1000);
+                }, i * 200);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

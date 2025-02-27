@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Birthday Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .card {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            min-height: 500px;
+            transition: transform 1s;
+        }
+        
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 1s;
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #654ea3, #da98b4);
+            transform: rotateY(0deg);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            transform: rotateY(180deg);
+        }
+        
+        .flipped .card-front {
+            transform: rotateY(180deg);
+        }
+        
+        .flipped .card-back {
+            transform: rotateY(0deg);
+        }
+        
+        .card-content {
+            text-align: center;
+            z-index: 2;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #fff;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #ffffff;
+            color: #654ea3;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chessboard {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 30px;
+            border: 8px solid #4e4376;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cell {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .black {
+            background-color: #b58863;
+        }
+        
+        .white {
+            background-color: #f0d9b5;
+        }
+        
+        .piece {
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .piece:hover {
+            transform: scale(1.2);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f0f0;
+            opacity: 0.7;
+            animation: fall linear forwards;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .chessboard {
+                width: 200px;
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chessboard {
+                width: 160px;
+                height: 160px;
+                border-width: 4px;
+            }
+            
+            .piece {
+                font-size: 1.4rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .bounce {
+            animation: bounce 2s ease infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        
+        .sparkle {
+            animation: sparkle 1s ease infinite;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-front">
+            <div class="card-content">
+                <h1>Happy Birthday!</h1>
+                <div class="chessboard" id="chessboard"></div>
+                <button class="btn" id="playBtn">Check Mate!</button>
+            </div>
+        </div>
+        <div class="card-back">
+            <div class="card-content">
+                <h1>You're Old...</h1>
+                <p>Another year closer to the inevitable heat death of the universe. How delightful.</p>
+                <p>Happy Birthday. Not that it matters.</p>
+                <button class="btn" id="resetBtn">Play Again, though why bother?</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up the chessboard
+            const chessboard = document.getElementById('chessboard');
+            const playBtn = document.getElementById('playBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const card = document.querySelector('.card');
+            
+            // Create chessboard
+            function createChessboard() {
+                chessboard.innerHTML = '';
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const cell = document.createElement('div');
+                        cell.classList.add('cell');
+                        
+                        // Color cells
+                        if ((row + col) % 2 === 0) {
+                            cell.classList.add('white');
+                        } else {
+                            cell.classList.add('black');
+                        }
+                        
+                        // Add pieces
+                        if (row === 1 || row === 6) {
+                            const piece = document.createElement('span');
+                            piece.classList.add('piece');
+                            piece.textContent = row === 1 ? '♟' : '♙';
+                            cell.appendChild(piece);
+                        } else if (row === 0 || row === 7) {
+                            const piece = document.createElement('span');
+                            piece.classList.add('piece');
+                            
+                            if (col === 0 || col === 7) {
+                                piece.textContent = row === 0 ? '♜' : '♖';
+                            } else if (col === 1 || col === 6) {
+                                piece.textContent = row === 0 ? '♞' : '♘';
+                            } else if (col === 2 || col === 5) {
+                                piece.textContent = row === 0 ? '♝' : '♗';
+                            } else if (col === 3) {
+                                piece.textContent = row === 0 ? '♛' : '♕';
+                            } else {
+                                piece.textContent = row === 0 ? '♚' : '♔';
+                            }
+                            
+                            cell.appendChild(piece);
+                        }
+                        
+                        chessboard.appendChild(cell);
+                    }
+                }
+                
+                // Make pieces interactive
+                const pieces = document.querySelectorAll('.piece');
+                pieces.forEach(piece => {
+                    piece.addEventListener('click', function() {
+                        piece.classList.add('bounce');
+                        setTimeout(() => {
+                            piece.classList.remove('bounce');
+                        }, 2000);
+                    });
+                });
+            }
+            
+            // Initialize chessboard
+            createChessboard();
+            
+            // Button events
+            playBtn.addEventListener('click', function() {
+                // Create confetti effect
+                createConfetti();
+                
+                // Animate chess pieces
+                const pieces = document.querySelectorAll('.piece');
+                pieces.forEach((piece, index) => {
+                    setTimeout(() => {
+                        piece.classList.add('sparkle');
+                    }, index * 50);
+                });
+                
+                // Flip card after animation
+                setTimeout(() => {
+                    card.classList.add('flipped');
+                }, 1500);
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                card.classList.remove('flipped');
+                setTimeout(() => {
+                    createChessboard();
+                }, 500);
+            });
+            
+            // Confetti effect
+            function createConfetti() {
+                const colors = ['#654ea3', '#da98b4', '#f0d9b5', '#b58863', '#2b5876', '#4e4376'];
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    const size = Math.random() * 10 + 5;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.background = color;
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    confetti.style.top = '-10px';
+                    confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // Easter egg - shake board on specific key press
+            document.addEventListener('keydown', function(e) {
+                if (e.key.toLowerCase() === 'c') {
+                    chessboard.classList.add('shake');
+                    setTimeout(() => {
+                        chessboard.classList.remove('shake');
+                    }, 500);
+                    
+                    const pieces = document.querySelectorAll('.piece');
+                    const randomPiece = pieces[Math.floor(Math.random() * pieces.length)];
+                    if (randomPiece) {
+                        randomPiece.classList.add('bounce');
+                        setTimeout(() => {
+                            randomPiece.classList.remove('bounce');
+                        }, 2000);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
