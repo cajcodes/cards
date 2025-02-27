@@ -373,8 +373,9 @@
                 font-size: 22px;
             }
             
-            .flower {
-                transform: scale(0.8);
+            /* Added mobile-specific override to speed up card flip transition */
+            .card {
+                transition: opacity 0.5s ease, transform 0.4s ease-in-out;
             }
         }
         
@@ -500,6 +501,7 @@
             const card = document.querySelector('.card');
             const flipButtons = document.querySelectorAll('.flip-button');
             const cardFront = document.querySelector('.card-front');
+            const flipDelay = window.innerWidth < 768 ? 400 : 800;
             
             // Make card visible after a short delay
             setTimeout(() => {
@@ -525,7 +527,7 @@
                     setTimeout(() => {
                         window.sparkleInterval = setInterval(createSparkle, 200);
                         window.petalInterval = setInterval(createFallingPetal, 500);
-                    }, 800);
+                    }, flipDelay);
                 });
             });
             
@@ -545,7 +547,7 @@
                     setTimeout(() => {
                         window.sparkleInterval = setInterval(createSparkle, 200);
                         window.petalInterval = setInterval(createFallingPetal, 500);
-                    }, 800);
+                    }, flipDelay);
                 }
             });
             
@@ -568,8 +570,8 @@
                     
                     // More forgiving touch detection for mobile
                     // Only check if it's a quick tap (under 300ms) and minimal movement
-                    if (timeDiff < 300 && distX < 15 && distY < 15 && 
-                        !e.target.closest('.flip-button') && 
+                    if (timeDiff < 300 && distX < 15 && distY < 15 &&
+                        !e.target.closest('.flip-button') &&
                         !e.target.closest('.photo-frame')) {
                         
                         // Temporarily reduce animation load during flip
@@ -585,7 +587,7 @@
                         setTimeout(() => {
                             window.sparkleInterval = setInterval(createSparkle, 200);
                             window.petalInterval = setInterval(createFallingPetal, 500);
-                        }, 800);
+                        }, flipDelay);
                     }
                 }
             }, { passive: true });
